@@ -25,9 +25,20 @@ The sandboxed environment (_container_) on Heroku, which hosts the app code and 
 ### When is Heroku ill-suited?
 - When there is need for low-latency
 - ... immediate or always-on availablity
-- ... the application/service reaches _medium_/_large_ size. Heroku's cost, which is more than an order of magnitude more than AWS, exceeds the costs saved by delegating infrastructure work to Heroku
-- ... custom, complex infrastucture needs or need of a tool outside of the limited number supported
+- ... the application/service reaches _medium_/_large_ size. Heroku's cost, which can be an order of magnitude more than AWS, exceeds the costs saved by delegating infrastructure work to Heroku
+- When infrastructure needs cannot be met by the finite number of add-ons or configuration presets available on Heroku
+
+### Issues in production - discovery and resolution
+#### Easiest checks
+- Build issues due to `.slugignore`: Check that Heroku's equivalent of Git's `.gitignore`, where Heroku ignores the mentioned files and directories, does not contain the required files/directories [[2]](#2)
+- Is there an issue with the upstream provider or host? What does https://status.heroku.com say? IF so then one has little choice but to wait.
+- Does reversion to the previous deployment resolve the issue? If there is a test/staging/development server of the same infrastructure then is that online and functional? Can the test environment and production be brought to parity to help diagnose the issue?
+
+#### Buildpacks: 
+  Buildpack: component of Heroku which sets up the environment for the application: dependencies, assets etc.
 
 
 #### _References_
 <a id="1">1. </a>[Heroku Dynos (official page)](https://www.heroku.com/dynos)
+
+<a id="2">2. </a>["Heroku: Up and "Running by Middleton, Schneeman: ch. 7](https://www.oreilly.com/library/view/heroku-up-and/9781449341381/ch07.html)
