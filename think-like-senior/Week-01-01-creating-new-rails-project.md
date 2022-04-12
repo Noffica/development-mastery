@@ -9,9 +9,9 @@ Yes. RoR has been in use for production-ready applications for many years now, a
 ### Costs and training
 $0 monetary cost of installation and use.
 
-RSpec offers its own DSL, which does necessitate training; however, it is approachable, which also applies to its documentation.
+RSpec offers its own DSL, which does necessitate training; however, it is approachable, which also applies to its documentation. Additionally, training material for RSpec is widely available.
 
-Additionally, training material for RSpec is widely available.
+Therefore, overall, the cost (in terms of time) for training may be considered reasonable.
 
 ----
 
@@ -24,8 +24,7 @@ The question of the state of the hiring pool of RoR developers is answered as fo
 
 It is limited [[2]](#2). New or junior developers are trained with either more syntactically strict, statically-typed languages such as Java/C# or approachable, scripting-friendly, general purpose languages which are also in extensive use outside of commercial software development such as Python. This is a contributor to the latter's popularity [[3]](#3).
 
-In comparison, Ruby accounts for 7.89% of developers to Python's 
-41.53%; RoR at 7.89% to Django's 13.02%.
+In comparison, Ruby accounts for 7.89% of developers to Python's 41.53%; RoR at 7.89% to Django's 13.02%.
 
 ----
 
@@ -76,6 +75,7 @@ As stated previously, in light of the stats of usage, [MiniTest](https://github.
 ****
 ----
 
+
 ## PostgreSQL
 ### Battle-tested
 Quite. It has been in extensive use in open-source, as well as prominent large-scale enterprise and non-enterprise applications for many years now. [[5]](#5)
@@ -85,7 +85,7 @@ Quite. It has been in extensive use in open-source, as well as prominent large-s
 ### Costs and training
 Due to the now decades-long prevalence of (SQL and) PostgreSQL, training material is abundant [[6]](#6). Therefore, cost of training can be considered nominal.
 
-Cost of acquisition of the technology is $0 as it is open-source.
+Cost of acquisition of the technology is $0 as it is open-source. However, of course, there is a cost of hosting / renting a PostgreSQL instance. Due to the proliferation of PostgreSQL, there are many service providers, and therefore, the cost is reasonable compared to alternatives to PostgreSQL.
 
 ----
 
