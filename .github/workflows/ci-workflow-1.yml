@@ -1,17 +1,51 @@
 name: GitHub Actions Demo
 on: [push]
 jobs:
-  Explore-GitHub-Actions: #name of job
+  Initial-setup-and-test: #name of job
     runs-on: ubuntu-latest
+    
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: postgres #default
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       - name: Check out repository code
         uses: actions/checkout@v3
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@359bebbc29cbe6c87da6bc9ea3bc930432750108
+        with: 
+          ruby-version: '3.1.1' #optional
+          # bundler-cache:  true    #optional - this command automatically triggers `bundle install`
+      - name: Install gems (dependencies)
+        run:  bundle install
+      - name: Install "Node"
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.2
+      - name: Install node dependencies
+        run:  npm ci #a CI optimised equivalent of `npm install`
+      - name: Setup PostgreSQL db
+        # Runs a script that creates a PostgreSQL table, populates
+        # the table with data, and then retrieves the data.
+        run:  node client.js
+        # Environment variables used by the `client.js` script to create a new PostgreSQL table.
+        env:
+          # The hostname used to communicate with the PostgreSQL service container
+          POSTGRES_HOST: postgres
+          # The default PostgreSQL port
+          POSTGRES_PORT: 5432
+      - name: Run tests
+        run:  bundle exec rspec
       - run: echo "🍏 This job's status is ${{ job.status }}."
