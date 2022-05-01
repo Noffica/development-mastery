@@ -24,7 +24,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Setup Ruby
-        uses: ruby/setup-ruby@359bebbc29cbe6c87da6bc9ea3bc930432750108
+        uses: ruby/setup-ruby@1
         with: 
           ruby-version: '3.1.1' #optional
           # bundler-cache:  true    #optional - this command automatically triggers `bundle install`
