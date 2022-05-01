@@ -34,9 +34,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.14.2
-      - name: Install node dependencies
-        run:  npm install
-        #run:  npm ci #needs `package.json` #a CI optimised equivalent of `npm install`
+      # - name: Install node dependencies
+      #   run:  npm install
+      #   #run:  npm ci #needs `package.json` #a CI optimised equivalent of `npm install`
       - name: Setup PostgreSQL db
         # Runs a script that creates a PostgreSQL table, populates
         # the table with data, and then retrieves the data.
