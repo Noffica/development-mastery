@@ -55,6 +55,18 @@ jobs:
           PGUSER:     postgres
           PGPASSWORD: postgres
         run:  bundle exec rspec
+
+      - name: Codecov
+        # uses: actions/checkout@master
+        uses: codecov/codecov-action@v2
+        with:
+          # token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+          # files: ./coverage1.xml,./coverage2.xml # optional
+          # flags: unittests # optional
+          # name: codecov-umbrella # optional
+          directory: ./coverage/ # optional
+          fail_ci_if_error: true # optional (default = false)
+          verbose: true # optional (default = false)
       
       - name: Conclude
         run: echo "🍏 This job's status is ${{ job.status }}."
