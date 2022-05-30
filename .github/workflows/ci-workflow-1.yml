@@ -1,0 +1,60 @@
+name: Ceremonial Integration with GitHub Actions
+on: [push]
+jobs:
+  Initial-setup-and-test: #name of job
+    runs-on: ubuntu-latest
+    
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres:13.5
+        # Provide the password for postgres
+        env:
+          POSTGRES_USER:      postgres
+          POSTGRES_PASSWORD:  postgres #default
+        ports: ["5432:5432"]
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version:   '3.1.1' #optional
+          bundler-cache:  true  #optional - runs `bundle install` and caches installed gems
+      
+      - name: Install "Node"
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.2
+      # - name: Install node dependencies #skipped as there is no `package.json`
+      #   run:  npm ci #← this is a CI optimised equivalent of `npm install`
+      
+      - name: Setup test database
+        env:
+          RAILS_ENV:  test
+          PGHOST:     localhost
+          PGUSER:     postgres
+          PGPASSWORD: postgres
+        # run: bin/rails db:test:prepare
+        run: bin/rails db:create db:migrate
+      
+      - name: Run tests
+        env:
+          RAILS_ENV:  test
+          PGHOST:     localhost
+          PGUSER:     postgres
+          PGPASSWORD: postgres
+        run:  bundle exec rspec
+      
+      - name: Conclude
+        run: echo "🍏 This job's status is ${{ job.status }}."
