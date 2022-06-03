@@ -20,4 +20,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_14_024501) do
     t.datetime "updated_at", null: false
   end
 
+# generate the migration
+#`bin/rails generate migration CreateArticles title:string body:text`
+# test the model
+## test all CRUD actions
+## index new create edit *update* delete/destroy
+
 end
