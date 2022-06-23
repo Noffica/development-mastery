@@ -1,2 +1,0 @@
-class KommentsController < ApplicationController
-end
