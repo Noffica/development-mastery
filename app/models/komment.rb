@@ -1,0 +1,2 @@
+class Komment < ApplicationRecord
+end
