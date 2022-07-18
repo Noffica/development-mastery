@@ -5,7 +5,7 @@
 <%# end ul %>
 <ul>
   <% @articles_all.each do |a| %>
-    <li><%= "#{a.title}: #{a.body}" %></li>
+    <li><a href="/articles/<%= a.id %>"> <%= a.title %> </a></li>
   <% end %>
 </ul>
 
