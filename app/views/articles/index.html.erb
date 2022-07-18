@@ -4,8 +4,10 @@
 <%# each li element contains one article object %>
 <%# end ul %>
 <ul>
-  <% @articles_all.each do |a| %>
-    <li><a href="/articles/<%= a.id %>"> <%= a.title %> </a></li>
+  <% @articles_all.each do |article| %>
+    <li>
+      <%= link_to(article.title, article) %>
+    </li>
   <% end %>
 </ul>
 
