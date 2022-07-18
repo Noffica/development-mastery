@@ -14,7 +14,7 @@ class ArticlesController < ApplicationController
   end
   # do NOT use #create as an alias; it is used for something
 
-  # load a single, particular Article object
+  # load a single, particular Article
   def show
     @article = Article.find(params[:id])
   end
