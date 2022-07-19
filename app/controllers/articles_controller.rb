@@ -1,4 +1,5 @@
 class ArticlesController < ApplicationController
+  
   def hello
     @message = "Hello there!"
   end
@@ -8,7 +9,7 @@ class ArticlesController < ApplicationController
     @articles_all = Article.all
   end
 
-  # a new one
+  # a new article is **only** instantiated, not saved
   def new
     @article_new = Article.new
   end
@@ -21,12 +22,12 @@ class ArticlesController < ApplicationController
 
   # create a single, new instance of Article
   def create
-    @article_new = Article.new(title: "…", body: "… …")
+    @article_new = Article.new(article_params)
     
     if @article_new.save
       redirect_to(@article_new)
     else
-      render(:new, status: unprocessable_entity)
+      render(:new, status: :unprocessable_entity)
     end
 
     #TODO look into params and related permissions: https://api.rubyonrails.org/classes/ActionController/Parameters.html
@@ -38,4 +39,4 @@ class ArticlesController < ApplicationController
     params.require(:article).permit(:title, :body)
   end
 
-end
+end #class ArticlesController
