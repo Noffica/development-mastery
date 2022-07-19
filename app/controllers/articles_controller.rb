@@ -33,4 +33,9 @@ class ArticlesController < ApplicationController
     #TODO look into #redirect_to and more explicit alternatives to loading the newly created Article object
   end
 
+  private
+  def article_params
+    params.require(:article).permit(:title, :body)
+  end
+
 end
