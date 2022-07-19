@@ -10,7 +10,7 @@ class ArticlesController < ApplicationController
 
   # a new one
   def new
-    @article = Article.new
+    @article_new = Article.new
   end
   # do NOT use #create as an alias; it is used for something
 
@@ -19,12 +19,18 @@ class ArticlesController < ApplicationController
     @article = Article.find(params[:id])
   end
 
+  # create a single, new instance of Article
   def create
-    a = Article.new(params[:article])
-    a.save
+    @article_new = Article.new(title: "…", body: "… …")
+    
+    if @article_new.save
+      redirect_to(@article_new)
+    else
+      render(:new, status: unprocessable_entity)
+    end
 
-    # look into params and related permissions: https://api.rubyonrails.org/classes/ActionController/Parameters.html
-    # look into #redirect_to and more explicit alternatives to loading the newly created Article object
+    #TODO look into params and related permissions: https://api.rubyonrails.org/classes/ActionController/Parameters.html
+    #TODO look into #redirect_to and more explicit alternatives to loading the newly created Article object
   end
 
 end
