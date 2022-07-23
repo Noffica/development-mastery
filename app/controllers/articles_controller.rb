@@ -19,6 +19,7 @@ class ArticlesController < ApplicationController
   def show
     @article = Article.find(params[:id])
   end
+  alias_method(:fetch_article, :show)
 
   # create a single, new instance of Article
   def create
@@ -33,11 +34,11 @@ class ArticlesController < ApplicationController
 
   # edit a single, particular instance of Article
   def edit
-    @article = Article.find(params[:id])
+    fetch_article
   end
 
   def update
-    @article = Article.find(params[:id])
+    fetch_article
 
     if @article.update(article_params)
       redirect_to(@article)
@@ -46,9 +47,12 @@ class ArticlesController < ApplicationController
     end
   end
 
+  # delete a single, particular instance of Article
+  def destroy
+    fetch_article.destroy
+    redirect_to(root_path, status: :see_other)
+  end
 
-  #TODO look into params and related permissions: https://api.rubyonrails.org/classes/ActionController/Parameters.html
-  #TODO look into #redirect_to and more explicit alternatives to loading the newly created Article object
 
   private
   def article_params
