@@ -46,6 +46,14 @@ class ArticlesController < ApplicationController
     end
   end
 
+  # delete a single, particular instance of Article
+  def destroy
+    @article = Article.find(params[:id])
+    @article.destroy
+    
+    redirect_to(root_path, status: :see_other)
+  end
+
 
   #TODO look into params and related permissions: https://api.rubyonrails.org/classes/ActionController/Parameters.html
   #TODO look into #redirect_to and more explicit alternatives to loading the newly created Article object
