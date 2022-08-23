@@ -17,6 +17,7 @@ RSpec.describe Article, type: :model do
   end
 
   pending "is valid with required parameters, where optional parameters are omitted"
+  pending "is subject to input sanitisation"
 
   it "has unique parameters" do
     subject.title = "A"
@@ -25,7 +26,10 @@ RSpec.describe Article, type: :model do
 
     article_two.title = subject.title
     article_two.body  = subject.body
-    expect(article_two).to(be_invalid)
+    
+    # expect(article_two).to(be_invalid)
+    article_two.valid?
+    expect(article_two.errors.full_messages.first).to(include("has already been taken"))
   end
 
   context "*Title* attribute's conditions" do
@@ -34,17 +38,17 @@ RSpec.describe Article, type: :model do
     end
 
     context "include `presence: true` guard" do
-      it 'is rejected if value is `nil`' do
+      it 'is rejected if value of `Title` is `nil`' do
         subject.title = nil
         expect(subject).to(be_invalid)
       end
       
-      it 'is rejected if empty/blank' do
+      it 'is rejected if value of `Title` is empty/blank' do
         subject.title = ''
         expect(subject).to(be_invalid)
       end
 
-      it 'is rejected if only spaces' do
+      it 'is rejected if value of `Title` is only spaces' do
         subject.title = ' '
         expect(subject).to(be_invalid)
       end
@@ -52,12 +56,11 @@ RSpec.describe Article, type: :model do
 
     pending "satisfies max. boundary (length)"
     pending "fails max. + 1 boundary (length)"
-    
-    it "conforms to UTF-8" do
-      subject.title = "😃 , 1% é اب تک ( }"
-      expect { subject.save }.to(change { Article.count }.by(1))
-      # expect(subject).to(be_valid)
-    end
+
+    pending "conforms to UTF-8"
+    #   subject.title = "😃 , 1% é اب تک ( }"
+    #   expect { subject.save }.to(change { Article.count }.by(1))
+    # end
   end #context "*Title* attribute's conditions"
 
   context "*Body* attribute's conditions" do
@@ -69,26 +72,22 @@ RSpec.describe Article, type: :model do
     pending "fails max. + 1 boundary (length)"
  
     context "ensure `presence: true` guard on *Body* attribute" do
-      it 'is rejected if value is `nil`' do
+      it 'is rejected if value of `Body` is is `nil`' do
         subject.body = nil
         expect(subject).to(be_invalid)
       end
       
-      it 'is rejected if empty/blank' do
+      it 'is rejected if value of `Body` is empty/blank' do
         subject.body = ''
         expect(subject).to(be_invalid)
       end
 
-      it 'is rejected if only spaces' do
+      it 'is rejected if value of `Body` is only spaces' do
         subject.body = ' '
         expect(subject).to(be_invalid)
       end
     end #context
 
-    it "conforms to UTF-8" do
-      subject.body = "😃 , 1% é اب تک ( }"
-      expect { subject.save }.to(change { Article.count }.by(1))
-      # expect(subject).to(be_valid)
-    end
+    pending "conforms to UTF-8"
   end #context "*Body* attribute's conditions"
 end #file
