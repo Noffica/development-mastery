@@ -2,7 +2,7 @@
 class Article < ApplicationRecord
   validates(
     :title,
-    presence: true
+    presence: true,
   )
   validates(
     :body, 
