@@ -14,6 +14,7 @@ _Database migrations_ are a tool used to make changes to the db structure/schema
 Each change is defined in the same Ruby/Rails DSL as the rest of the Rails-based application. The Object Relational Mapper (ORM) for SQL databases like MySQL, PostgreSQL or Object Document Mapper (ODM) for NoSQL databases like MongoDB serve as the interface with the db, and translates the Ruby syntax code to the appropriate db language commands.
 
 **Order of changes made to the db schema**
+
 Migration files are _versioned_: the filenames contain the timestamp based on time of creation; **however**, the order in which migrations are run, also recorded in the db, takes precedence. Migration 'A' created before migration 'B' but executed second would be recorded as such, and would be applied as such when the schema is re-created. This is one way conflicts are avoided. It should be noted that changes made to a past, applied migration can thus cause problems as the db will have already recorded the migration as applied, and will not re-apply; consequently, dependant changes will be impacted.
 
 Thus the series of the _migration_ files serves as the entire step-wise history and sequence of all changes made to the db schema. Database schema can thus be imparted to other environments or machines with relative ease. As stated previously, since changes are defined in saved files (and generally _committed_ to code), they can be subject to _code reviews_ and serve as an _audit trail_ of changes.
@@ -37,3 +38,4 @@ In conjunction with Rails' convention, it allows separation of concerns and resp
 <a id="3">3.</a> [Rails migration - a complete guide](http://stackify.com/rails-migration-a-complete-guide/)
 
 <a id="4">4.</a> "Rails 3 Way, The" by Fernandez, O. | Addison-Wesley Professional | 2010
+
