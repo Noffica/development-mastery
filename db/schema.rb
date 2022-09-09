@@ -10,12 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_13_051428) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_01_055132) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "articles", force: :cascade do |t|
     t.string "title"
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["title", "body"], name: "index_for_unique_combination_of_title_body", unique: true
+  end
+
+  create_table "komments", force: :cascade do |t|
+    t.string "author"
     t.text "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
