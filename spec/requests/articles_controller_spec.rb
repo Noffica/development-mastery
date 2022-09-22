@@ -8,6 +8,12 @@ RSpec.describe "Article", type: :request do
     end
   end
 
+  RSpec.shared_examples 'renders its template' do
+    it 'renders its template' do
+      expect(response).to(render_template(template.to_sym))
+    end
+  end
+
   describe "GET #index" do
     before(:each) do
       get(articles_url)
@@ -15,9 +21,8 @@ RSpec.describe "Article", type: :request do
     
     include_examples "successful response"
 
-    it "renders its template" do
-      expect(response).to(render_template(:index))
-    end
+    let(:template) { template = "index" }
+    include_examples "renders its template"
   end #describe "GET #index"
 
   describe "GET #show" do
@@ -28,10 +33,9 @@ RSpec.describe "Article", type: :request do
     end
     
     include_examples "successful response"
-
-    it "renders its template" do
-      expect(response).to(render_template(:show))
-    end
+    
+    let(:template) { template = "show" }
+    include_examples "renders its template"
 
     it 'handles a not-found article' do
       expect {
@@ -43,12 +47,14 @@ RSpec.describe "Article", type: :request do
   end #describe "GET #show"
 
   describe 'GET #new' do
+    before(:each) do
+      get(new_article_url)
+    end
+  
     include_examples "successful response"
     
-    it 'renders its template' do
-      get(new_article_url)
-      expect(response).to(render_template(:new))
-    end
+    let(:template) { template = "new" }
+    include_examples "renders its template"
   end #describe 'GET #new'
 
 end #file
