@@ -8,18 +8,17 @@ class ArticlesController < ApplicationController
   def index
     @articles_all = Article.all
   end
-
-  # a new article is **only** instantiated, not saved
-  def new
-    @article = Article.new
-  end
-  # do NOT use #create as an alias; it is used for something
-
+  
   # load a single, particular Article
   def show
     @article = Article.find(params[:id])
   end
   alias_method(:fetch_article, :show)
+
+  # a new article is **only** instantiated, not saved
+  def new
+    @article = Article.new
+  end
 
   # create a single, new instance of Article
   def create
