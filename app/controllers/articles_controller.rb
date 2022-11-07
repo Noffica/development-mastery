@@ -11,7 +11,9 @@ class ArticlesController < ApplicationController
   
   # load a single, particular Article
   def show
-    @article = Article.find(params[:id])
+    @article ||= Article.find(params[:id])
+#   rescue ActiveRecord::RecordNotFound
+#     redirect_to(articles_url, notice: "Article not found.")
   end
   alias_method(:fetch_article, :show)
 
@@ -48,8 +50,13 @@ class ArticlesController < ApplicationController
 
   # delete a single, particular instance of Article
   def destroy
-    fetch_article.destroy
-    redirect_to(root_path, status: :see_other)
+    if fetch_article.destroy
+      flash[:notice] = "Article \"#{@article.title}\" has been deleted."
+      redirect_to(articles_path)
+      # redirect_to(root_path, status: :see_other)
+    else
+      flash[:notice] = "Article \"#{@article.title}\" could NOT be deleted."
+    end
   end
 
 
