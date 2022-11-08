@@ -8,23 +8,9 @@ RSpec.describe(Article, type:(:request)) do #start of spec file
     end
   end
 
-  RSpec.shared_examples 'renders its template' do
+  RSpec.shared_examples 'rendition of template' do
     it 'renders its template' do
       expect(response).to(render_template(template.to_sym))
-    end
-  end
-
-  RSpec.shared_examples 'creates a new Article object' do
-    let(:article_one_create) { post(articles_url, params: { article: { title: 'one', body: 'abcd' } }) }
-    let(:article_two_create) { post(articles_url, params: { article: { title: 'two', body: 'efgh' } }) }
-
-    it 'finds the newly created Article object' do
-      article_one_create
-      expect(response).to(have_http_status(:found))
-      
-      expect { 
-        post(articles_url, params: { article: { title: 'two', body: 'efgh' } })
-      }.to change(Article, :count).by(1)
     end
   end
 
@@ -36,7 +22,7 @@ RSpec.describe(Article, type:(:request)) do #start of spec file
     include_examples "successful response"
 
     let(:template) { template = "index" }
-    include_examples "renders its template"
+    include_examples "rendition of template"
   end #describe "GET #index"
 
   describe "GET #show" do
@@ -49,7 +35,7 @@ RSpec.describe(Article, type:(:request)) do #start of spec file
     include_examples "successful response"
     
     let(:template) { template = "show" }
-    include_examples "renders its template"
+    include_examples "rendition of template"
 
     it 'handles a not-found article' do
       expect {
@@ -68,15 +54,28 @@ RSpec.describe(Article, type:(:request)) do #start of spec file
     include_examples("successful response")
     
     let(:template) { template = "new" }
-    include_examples("renders its template")
+    include_examples("rendition of template")
   end #describe 'GET #new'
 
   describe 'POST #create' do
-    include_examples("creates a new Article object")
+    let(:valid_article) { { article: { title: 'one', body: 'abcd' } } }
+    # let(:article_two_params) { params: { article: { title: 'two', body: 'efgh' } } }
+    
+    # before(:each) do
+    #   post(articles_url, params: { article: { title: 'one', body: 'abcd' } })
+    # end
+    
+    it 'yields the correct response' do
+      post(articles_url, params: valid_article)
+      expect(response).to(have_http_status(:found))
+    end
+
+    it 'increments the count of Article by 1' do
+      expect {
+        post(articles_url, params: valid_article)
+      }.to(
+        change(Article, :count).by(1)
+      )
+    end
   end #describe "POST #create"
-
-  describe 'GET #edit' do
-    # include_examples("creates a new Article object")
-  end
-
 end #file
