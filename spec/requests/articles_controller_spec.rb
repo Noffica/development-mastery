@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe(Article, type: (:request)) do #start of spec file
-  let(:article_one) { Article.create(title: 'A', body: 'abcd') }
+  let(:article_one) { Article.create(title: 'A', body: 'abcd') } #TODO: sensible way?
   
   RSpec.shared_examples 'has successful response' do
     it 'has successful response' do
@@ -26,23 +26,40 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
     include_examples "renders its template"
   end #describe "GET #index"
 
-  describe "GET #show" do
-    before(:each) do
-      get(article_url(article_one))
+  describe "GET #show (#edit aliased to #show)" do
+    context "valid @article path" do
+      before(:each) do
+        get(article_url(article_one))
+      end
       
       include_examples("has successful response")
-    end
-    
-    let(:template) { template = "show" }
-    include_examples("renders its template")
+      
+      let(:template) { template = "show" }
+      include_examples("renders its template")
+      
+      it "contains the @article's attributes" do
+        expect(response.body).to  include(article_one.title)
+                             .and include(article_one.body)
+      end
+    end #context
 
-    it 'raises expected error for non-existent @article' do
-      expect {
-        get(article_url("0000"))
-      }.to(
-        raise_error(ActiveRecord::RecordNotFound)
-      )
-    end
+    context "invalid @article path" do
+      it 'raises expected error for incorrect @article path' do
+        expect {
+          get(article_url("0000"))
+        }.to(
+          raise_error(ActiveRecord::RecordNotFound) #TODO: sensible way?
+        )
+      end
+      
+      it 'raises expected error when no / nil ID is provided' do #TODO get(article_url()) ≡ get(article_url(nil))?
+        expect {
+          get(article_url())
+        }.to(
+          raise_error(ActionController::UrlGenerationError) #TODO: sensible way?
+        )
+      end
+    end #context
   end #describe "GET #show"
 
   describe 'GET #new' do
@@ -57,73 +74,74 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
   end #describe 'GET #new'
 
   describe 'POST #create' do
-    context 'valid @article' do
-      let(:valid_article) { { article: { title: 'one', body: 'abcd' } } }
+    context 'valid attributes' do
+      let(:valid_attributes) { { title: 'one', body: 'abcd' } }
       
       it 'yields a "302 Found" response' do
-        post(articles_url, params: valid_article)
-        expect(response).to(have_http_status(:found))
+        post(articles_url, params: { article: valid_attributes })
+        expect(response).to(redirect_to(Article.last))
+        expect(response).to(have_http_status(:found)) #TODO: does not the previous line satisfy this test as well?
       end
 
-      it 'increments the count of Article by 1' do
+      it 'increments the count of Article by 1' do #TODO: relevant or testing db operation?
         expect {
-          post(articles_url, params: valid_article)
+          post(articles_url, params: valid_attributes)
         }.to(
           change(Article, :count).by(1)
         )
       end
     end #context
 
-    context 'invalid @article\'s' do
-      # let(:invalid_article) { { article: { title: nil, body: nil } } }
+    context 'invalid attributes' do
+      let(:invalid_attributes) { { title: nil, body: nil } }
       
-      after(:each) do
-        expect(response).to have_http_status(:unprocessable_entity)
-        # expect { post(articles_url, params: invalid_article) }.to change(Article, :count).by(0)
+      it 'yields "422 Unprocessable entity" when params are invalid' do
+        post(articles_url, params: { article: invalid_attributes })
+        expect(response).to(have_http_status(:unprocessable_entity))
       end
-
-      it 'yields "422 Unprocessable entity" with "title: nil" and valid body' do
-        post(articles_url, params: { article: { title: nil, body: 'abcd' } })
+      
+      it 'does *not* result in change of count of Articles' do
+        expect {
+          post(articles_url, params: { article: invalid_attributes })
+        }.to_not(
+          change(Article, :count)
+        )
       end
-
-      it 'yields "422 Unprocessable entity" with "title" an empty string and "body" as valid' do
-        post(articles_url, params: { article: { title: '', body: 'zxcv' } })
-      end
-
-      it 'yields "422 Unprocessable entity" with "title" as only spaces and "body" as valid' do
-        post(articles_url, params: { article: { title: '  ', body: 'abcd' } })
-      end
-
-      it 'yields "422 Unprocessable entity" with "title" as valid and "body" as nil' do
-        post(articles_url, params: { article: { title: 'a', body: nil } })
-      end
-
-      it 'yields "422 Unprocessable entity" with "title" as valid and "body" as empty string' do
-        post(articles_url, params: { article: { title: 'a', body: '' } })
-      end
-
-      it 'yields "422 Unprocessable entity" with "title" as valid and "body" as blank spaces' do
-        post(articles_url, params: { article: { title: 'a', body: '  ' } })
-      end
-
-      pending 'both attributes invalid: nil, empty string, blank spaces'
-    end
+    end #context
   end #describe "POST #create"
 
-  describe 'GET #edit' do
-    before(:each) do
-      get(edit_article_url(article_one))
-    end
-    
-    include_examples("has successful response")
 
-    let(:template) { template = "edit" }
-    include_examples("renders its template")
-  end #describe "GET #edit"
 
   describe 'PATCH #update' do
-    it 'updates the @article' do
-      patch(article_url(article_one), params: { article: { title: 'asdf', body: 'zxcv' } })
+    let(:valid_attributes_new)   { { title: 'Updated title', body: 'Updated body' } }
+    let(:invalid_attributes_new) { { title: nil,             body: nil } }
+
+    before(:each) do
+      patch(article_url(article_one), params: { article: valid_attributes_new })
+    end
+
+    context "success with valid new attributes for update" do
+      it 're-directs to the updated @article' do
+        expect(response).to redirect_to(article_url(article_one))
+      end
+
+      it 'bears the updated attributes' do
+        expect(article_one.reload.title).to eql(valid_attributes_new[:title])
+      end
+    end #context
+
+    context "does not create an additional @article" do
+      it 'does *not* change Article count' do
+        expect { 
+          patch(article_url(article_one), params: { article: valid_attributes_new }) #TODO: a way to include in previous #context?
+        }.to_not(
+          change(Article, :count)
+        )
+      end
+    end
+
+    context "expected errors with invalid new attributes for update" do
+      pending "raises expected error when attributes for update are invalid"
     end
   end #describe "PATCH update"
 end #of spec file
