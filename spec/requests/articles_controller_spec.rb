@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe(Article, type: (:request)) do #start of spec file
   let(:article_one) { Article.create(title: 'A', body: 'abcd') } #TODO: sensible way?
+  let(:article_two) { Article.create(title: 'B', body: 'zxcv') }
   
   RSpec.shared_examples 'has successful response' do
     it 'has successful response' do
@@ -48,7 +49,7 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
         expect {
           get(article_url("0000"))
         }.to(
-          raise_error(ActiveRecord::RecordNotFound) #TODO: sensible way?
+          raise_error(ActiveRecord::RecordNotFound) #TODO: sensible way? Notifications?
         )
       end
       
@@ -116,32 +117,41 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
     let(:valid_attributes_new)   { { title: 'Updated title', body: 'Updated body' } }
     let(:invalid_attributes_new) { { title: nil,             body: nil } }
 
-    before(:each) do
-      patch(article_url(article_one), params: { article: valid_attributes_new })
-    end
-
     context "success with valid new attributes for update" do
+      before(:each) do
+        patch(article_url(article_one), params: { article: valid_attributes_new })
+      end
+
       it 're-directs to the updated @article' do
         expect(response).to redirect_to(article_url(article_one))
       end
 
       it 'bears the updated attributes' do
         expect(article_one.reload.title).to eql(valid_attributes_new[:title])
+        expect(article_one.reload.body).to  eql(valid_attributes_new[:body])
+      end
+      
+      it 'does *not* change Article count' do
+        expect { }.to_not(change(Article, :count))
       end
     end #context
 
-    context "does not create an additional @article" do
-      it 'does *not* change Article count' do
-        expect { 
-          patch(article_url(article_one), params: { article: valid_attributes_new }) #TODO: a way to include in previous #context?
-        }.to_not(
-          change(Article, :count)
-        )
-      end
-    end
-
     context "expected errors with invalid new attributes for update" do
-      pending "raises expected error when attributes for update are invalid"
-    end
+      it "refuses to process the entity if updated @article is equivalent to an existing one" do
+        patch(article_url(article_two), params: { article: { title: article_one.title, body: article_one.body } })
+        expect(response).to(have_http_status(:unprocessable_entity))
+      end
+
+      it 'refuses to process @article if attributes are invalid' do
+        patch(article_url(article_two), params: { article: invalid_attributes_new })
+        expect(response).to(have_http_status(:unprocessable_entity))
+      end
+
+      pending "successfully process the entity when only one attribute clashes"
+      pending "assert no change to Article.count for previous spec."
+
+      pending "existing @article can be updated to be as it was"
+      pending "assert no change to Article.count for previous spec."
+    end #context
   end #describe "PATCH update"
-end #of spec file
+end #of file
