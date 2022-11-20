@@ -1,5 +1,7 @@
 class ArticlesController < ApplicationController
   
+  before_action :set_article, only: [:show, :edit, :create, :update, :destroy]
+
   def hello
     @message = "Hello there!"
   end
@@ -11,7 +13,7 @@ class ArticlesController < ApplicationController
   
   # load a single, particular Article
   def show
-    @article ||= Article.find(params[:id])
+    # before_action
   # rescue ActiveRecord::RecordNotFound#, ActionController::UrlGenerationError #TODO: resolve this and request specs.
   #   redirect_to(articles_path, notice: "Article not found.")
   # rescue ActionController::UrlGenerationError
@@ -26,7 +28,7 @@ class ArticlesController < ApplicationController
 
   # create a single, new instance of Article
   def create
-    @article = Article.new(article_params)
+    # before_action
     
     if @article.save
       redirect_to(@article)
@@ -37,11 +39,11 @@ class ArticlesController < ApplicationController
 
   # edit a single, particular instance of Article
   def edit
-    fetch_article
+    # before_action
   end
 
   def update
-    fetch_article
+    # before_action
 
     if @article.update(article_params)
       redirect_to(@article)
@@ -52,7 +54,8 @@ class ArticlesController < ApplicationController
 
   # delete a single, particular instance of Article
   def destroy
-    if fetch_article.destroy
+    # before_action
+    if @article.destroy
       flash[:notice] = "Article \"#{@article.title}\" has been deleted."
       redirect_to(articles_path)
       # redirect_to(root_path, status: :see_other)
@@ -65,6 +68,11 @@ class ArticlesController < ApplicationController
   private
   def article_params
     params.require(:article).permit(:title, :body)
+  end
+
+  private
+  def set_article
+    @article ||= Article.find(params[:id])
   end
 
 end #class ArticlesController

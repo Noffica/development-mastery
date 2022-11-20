@@ -52,7 +52,7 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
           raise_error(ActiveRecord::RecordNotFound) #TODO: sensible way? Notifications?
         )
       end
-      
+
       it 'raises expected error when no / nil ID is provided' do #TODO get(article_url()) ≡ get(article_url(nil))?
         expect {
           get(article_url())
@@ -119,6 +119,7 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
 
     context "success with valid new attributes for update" do
       before(:each) do
+        # TODO use @instance_variable
         patch(article_url(article_one), params: { article: valid_attributes_new })
       end
 
@@ -132,6 +133,7 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
       end
       
       it 'does *not* change Article count' do
+        # TODO: see L122
         expect { }.to_not(change(Article, :count))
       end
     end #context
@@ -154,4 +156,9 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
       pending "assert no change to Article.count for previous spec."
     end #context
   end #describe "PATCH update"
+
+  describe "#DELETE" do
+    pending "delete"
+    pending "notice appears"
+  end #describe #DELETE
 end #of file
