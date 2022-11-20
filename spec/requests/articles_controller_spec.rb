@@ -86,7 +86,7 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
 
       it 'increments the count of Article by 1' do #TODO: relevant or testing db operation?
         expect {
-          post(articles_url, params: valid_attributes)
+          post(articles_url, params: { article: valid_attributes })
         }.to(
           change(Article, :count).by(1)
         )
@@ -119,8 +119,7 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
 
     context "success with valid new attributes for update" do
       before(:each) do
-        # TODO use @instance_variable
-        patch(article_url(article_one), params: { article: valid_attributes_new })
+        @patch_response = patch(article_url(article_one), params: { article: valid_attributes_new })
       end
 
       it 're-directs to the updated @article' do
@@ -133,8 +132,7 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
       end
       
       it 'does *not* change Article count' do
-        # TODO: see L122
-        expect { }.to_not(change(Article, :count))
+        expect { @patch_response }.to_not(change(Article, :count))
       end
     end #context
 
