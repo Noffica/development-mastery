@@ -1,6 +1,6 @@
 class ArticlesController < ApplicationController
   
-  before_action :set_article, only: [:show, :edit, :create, :update, :destroy]
+  before_action :set_article, only: [:show, :edit, :update, :destroy]
 
   def hello
     @message = "Hello there!"
@@ -28,7 +28,7 @@ class ArticlesController < ApplicationController
 
   # create a single, new instance of Article
   def create
-    # before_action
+    @article = Article.new(article_params)
     
     if @article.save
       redirect_to(@article)
