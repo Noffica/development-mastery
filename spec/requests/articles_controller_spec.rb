@@ -156,7 +156,25 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
   end #describe "PATCH update"
 
   describe "#DELETE" do
-    pending "delete"
+    # before(:each) do
+    #   article_one
+    #   @deletion_response = delete(article_url(article_one))
+    # end
+
+    it "deletes the @article" do
+      delete(article_url(article_one))
+      expect(response).to(redirect_to(articles_url))
+    end
+
+    it "reduces number of @article objects by 1" do
+      article_one # let(:article_one) { Article.create(title: 'A', body: 'abcd') }
+      expect { 
+        delete(article_url(article_one))
+      }.to(
+        change(Article, :count).by(-1)
+      )
+    end
+    
     pending "notice appears"
   end #describe #DELETE
 end #of file
