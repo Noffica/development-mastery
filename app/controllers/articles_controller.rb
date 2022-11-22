@@ -13,7 +13,7 @@ class ArticlesController < ApplicationController
   
   # load a single, particular Article
   def show
-    # before_action
+    # before_action: :set_article
   # rescue ActiveRecord::RecordNotFound#, ActionController::UrlGenerationError #TODO: resolve this and request specs.
   #   redirect_to(articles_path, notice: "Article not found.")
   # rescue ActionController::UrlGenerationError
@@ -39,11 +39,11 @@ class ArticlesController < ApplicationController
 
   # edit a single, particular instance of Article
   def edit
-    # before_action
+    # before_action: :set_article
   end
 
   def update
-    # before_action
+    # before_action: :set_article
 
     if @article.update(article_params)
       redirect_to(@article)
@@ -54,7 +54,8 @@ class ArticlesController < ApplicationController
 
   # delete a single, particular instance of Article
   def destroy
-    # before_action
+    # before_action: :set_article
+    
     if @article.destroy
       flash[:notice] = "Article \"#{@article.title}\" has been deleted."
       redirect_to(articles_path)
