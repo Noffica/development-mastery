@@ -14,10 +14,6 @@ class ArticlesController < ApplicationController
   # load a single, particular Article
   def show
     # before_action: :set_article
-  # rescue ActiveRecord::RecordNotFound#, ActionController::UrlGenerationError #TODO: resolve this and request specs.
-  #   redirect_to(articles_path, notice: "Article not found.")
-  # rescue ActionController::UrlGenerationError
-  #   redirect_to(articles_path, notice: "Article not found.")
   end
   alias_method(:fetch_article, :show)
 
