@@ -32,6 +32,3 @@
 
 # Simplecov
 coverage/
-
-#JetBrains
-/.idea/*
