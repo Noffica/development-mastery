@@ -1,5 +1,7 @@
 require 'rails_helper'
 
+# #build*, #create are from FactoryBot
+
 RSpec.describe Article, type: :model do
   let(:subject) { described_class.new }
 
@@ -7,29 +9,40 @@ RSpec.describe Article, type: :model do
 
   context "when considering all data attributes" do
     it "is invalid without required parameters" do
-      expect(subject).to be_invalid
+      # expect(subject).to be_invalid
+      expect(build(:article, :no_attributes)).to(be_invalid)
     end
 
     it "is valid with all of its parameters" do
-      subject.title = "A"
-      subject.body  = "abcd"
+      # subject.title = "A"
+      # subject.body  = "abcd"
     
-      expect(subject).to be_valid
+      expect(build(:article, :valid_attributes)).to(be_valid)
     end
 
     pending "is valid with required parameters, where optional parameters are omitted"
     pending "is subject to input sanitisation"
 
     it "has unique parameters" do
-      subject.title = "A"
-      subject.body  = "abcd"
-      subject.save
+      create(:article, :valid_attributes)
+      duplicate_attempt = build(:article, :valid_attributes)
+      duplicate_attempt.valid?
 
-      article_two.title = subject.title
-      article_two.body  = subject.body
+      expect(
+        duplicate_attempt.errors.full_messages.first
+      ).to(
+        include("has already been taken")
+      )
+
+      # subject.title = "A"
+      # subject.body  = "abcd"
+      # subject.save
+
+      # article_two.title = subject.title
+      # article_two.body  = subject.body
       
-      article_two.valid?
-      expect(article_two.errors.full_messages.first).to(include("has already been taken"))
+      # article_two.valid?
+      # expect(article_two.errors.full_messages.first).to(include("has already been taken"))
     end
   end #context
 
