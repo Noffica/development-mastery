@@ -9,5 +9,13 @@ FactoryBot.define do
       title { 'A' }
       body  { 'abcd' }
     end
+
+    trait :title_attribute_only do
+      title { 'A' }
+    end
+
+    trait :body_attribute_only do
+      body { 'abcd' }
+    end
   end
 end

@@ -47,24 +47,47 @@ RSpec.describe Article, type: :model do
   end #context
 
   context "when checking the *Title* attribute and fixing the Body attribute" do
-    before(:each) do
-      subject.body = 'abcd'
-    end
+    # before(:each) do
+      # subject.body = 'abcd'
+    # end
+
+    let(:article_one) { build(:article, body: 'abcd') }
 
     context "include `presence: true` guard" do
-      it 'is rejected if value of `Title` is `nil`' do
-        subject.title = nil
-        expect(subject).to(be_invalid)
-      end
-      
-      it 'is rejected if value of `Title` is empty/blank' do
-        subject.title = ''
-        expect(subject).to(be_invalid)
+      it 'is rejected if `Title` is `nil`' do
+        # expect(article_one).to(be_invalid)
+        expect(
+          build(:article, :body_attribute_only)
+        ).to(
+          be_invalid
+        )
+        # subject.title = nil
+        # expect(subject).to(be_invalid)
       end
 
-      it 'is rejected if value of `Title` is only spaces' do
-        subject.title = ' '
-        expect(subject).to(be_invalid)
+      it 'is rejected if `Title` is empty/blank' do
+        expect(
+          build(:article, :body_attribute_only, title: '')
+        ).to(
+          be_invalid
+        )
+        
+        # article_one.title = ''
+        # expect(article_one).to(be_invalid)
+
+        # subject.title = ''
+        # expect(subject).to(be_invalid)
+      end
+
+      it 'is rejected if `Title` is only spaces' do
+        expect(
+          build(:article, :body_attribute_only, title: ' ')
+        ).to(
+          be_invalid
+        )
+
+        # subject.title = ' '
+        # expect(subject).to(be_invalid)
       end
     end #context
 
@@ -84,18 +107,34 @@ RSpec.describe Article, type: :model do
  
     context "ensure `presence: true` guard on *Body* attribute" do
       it 'is rejected if value of `Body` is is `nil`' do
-        subject.body = nil
-        expect(subject).to(be_invalid)
+        expect(
+          build(:article, :title_attribute_only)
+        ).to(
+          be_invalid
+        )
+        
+        # subject.body = nil
+        # expect(subject).to(be_invalid)
       end
       
-      it 'is rejected if value of `Body` is empty/blank' do
-        subject.body = ''
-        expect(subject).to(be_invalid)
+      it 'is rejected if `Body` is empty/blank' do
+        expect(
+          build(:article, :title_attribute_only, body: '')
+        ).to(
+          be_invalid
+        )
+        # subject.body = ''
+        # expect(subject).to(be_invalid)
       end
 
       it 'is rejected if value of `Body` is only spaces' do
-        subject.body = ' '
-        expect(subject).to(be_invalid)
+        expect(
+          build(:article, :title_attribute_only, body: ' ')
+        ).to(
+          be_invalid
+        )
+        # subject.body = ' '
+        # expect(subject).to(be_invalid)
       end
     end #context
 
