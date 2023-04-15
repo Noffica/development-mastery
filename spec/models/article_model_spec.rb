@@ -20,9 +20,6 @@ RSpec.describe Article, type: :model do
       )
     end
 
-    pending "is valid with required parameters, where optional parameters are omitted"
-    pending "is subject to input sanitisation"
-
     it "has unique parameters" do
       create(:article, :valid_attributes)
       duplicate_attempt = build(:article, :valid_attributes)
@@ -63,16 +60,11 @@ RSpec.describe Article, type: :model do
       end
     end #context
 
-    pending "satisfies max. boundary (length)"
-    pending "fails max. + 1 boundary (length)"
-
-    pending "conforms to UTF-8"
+    pending "satisfies max. boundary (length)" #Issue 20 on GitHub
+    pending "fails max. + 1 boundary (length)" #Issue 20 on GitHub
   end #context
 
   context "when checking the *Body* attribute and fixing the Title attribute" do
-    pending "satisfies max. boundary (length)"
-    pending "fails max. + 1 boundary (length)"
- 
     context "ensure `presence: true` guard on *Body* attribute" do
       it 'is rejected if value of `Body` is is `nil`' do
         expect(
@@ -81,7 +73,7 @@ RSpec.describe Article, type: :model do
           be_invalid
         )
       end
-      
+
       it 'is rejected if `Body` is empty/blank' do
         expect(
           build(:article, :title_attribute_only, body: '')
@@ -98,7 +90,5 @@ RSpec.describe Article, type: :model do
         )
       end
     end #context
-
-    pending "conforms to UTF-8"
   end #context
 end #file
