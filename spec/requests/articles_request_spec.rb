@@ -1,9 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe(Article, type: (:request)) do #start of spec file
-  # let(:article_one) { Article.create(title: 'A', body: 'abcd') }
-  # let(:article_two) { Article.create(title: 'B', body: 'zxcv') }
-
   describe "GET #index" do
     before(:each) do
       get(articles_path)
@@ -20,8 +17,10 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
 
   describe "GET #show" do
     context "valid @article path" do
+      let(:article_one) { FactoryBot.create(:article, :valid_attributes) }
+
       before(:each) do
-        get(article_path(create(:article, :valid_attributes)))
+        get article_path(article_one)
       end
 
       it 'has a successful response' do
@@ -74,7 +73,8 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
           post_with_valid_attributes
         }.to(
           change(Article, :count).by(1)
-        )      end
+        )
+      end
     end #context
 
     context 'invalid attributes' do
@@ -168,31 +168,52 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
       end
     end
 
-    pending "existing @article can be updated to be as it was"
-    pending "assert no change to Article.count for previous spec."
+    context "existing @article can be updated with same, existing data attributes" do
+      let(:article_one_before_changes) { article_one }
+
+      before(:each) do
+        patch(
+          article_path(article_one),
+          params: { article: { title: article_one.title, body: article_one.body } }
+        )
+      end
+
+      it 'successfully re-directs to updated @article' do
+        expect(response).to redirect_to(article_path(article_one))
+      end
+
+      it 'bears the same attributes' do
+        expect(article_one.reload.title).to eql(article_one_before_changes.title)
+        expect(article_one.reload.body).to  eql(article_one_before_changes.body)
+      end
+
+      it 'does *not* change Article count' do
+        expect { article_one.reload }.not_to change(Article, :count)
+      end
+    end #context
   end #describe "PATCH update"
 
   describe "#DELETE" do
-    let(:deletion) { delete(article_path(article_one)) }
+    let(:article_one) { FactoryBot.create(:article, :valid_attributes) }
 
     it "deletes the @article" do
-      deletion
-      expect(response).to(redirect_to(articles_path))
+      delete(article_path(article_one))
+      expect(response).to redirect_to(articles_path)
     end
 
     it "reduces number of @article objects by 1" do
       article_one #instantiation
       expect {
-        deletion
+        delete(article_path(article_one))
       }.to(
         change(Article, :count).by(-1)
       )
     end
 
     it 'displays notice of successful deletion' do
-      article_title = article_one.title
-      deletion
-      expect(flash[:notice]).to(eq("Article \"#{article_title}\" has been deleted."))
+      deleted_article_title = article_one.title
+      delete(article_path(article_one))
+      expect(flash[:notice]).to(eq("Article \"#{deleted_article_title}\" has been deleted."))
     end
   end #describe #DELETE
 end #of file
