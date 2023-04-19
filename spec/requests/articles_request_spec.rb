@@ -74,8 +74,7 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
           post_with_valid_attributes
         }.to(
           change(Article, :count).by(1)
-        )
-      end
+        )      end
     end #context
 
     context 'invalid attributes' do
@@ -99,9 +98,10 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
   end #describe "POST #create"
 
   describe 'PATCH #update' do
-    let(:new_valid_attributes) { attributes_for(:article, :new_valid_attributes) }
-    let(:invalid_attributes)   { attributes_for(:article, :invalid_attributes) }
     let(:article_one) { FactoryBot.create(:article, :valid_attributes) }
+    let(:article_two) { FactoryBot.create(:article, :new_valid_attributes) }
+    let(:new_valid_attributes) { attributes_for(:article, :new_valid_attributes) }
+    let(:invalid_attributes)   { attributes_for(:article, :no_attributes) }
 
     context "success with valid new attributes for update" do
       before(:each) do
@@ -117,33 +117,56 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
       end
 
       it 'bears the updated attributes' do
-        expect(article_one.reload.title).to eql(new_valid_attributes[:title])
-        expect(article_one.reload.body).to  eql(new_valid_attributes[:body])
+        article_one.reload
+        expect(article_one).to have_attributes(new_valid_attributes)
       end
 
-      it 'does *not* change Article count' do
-        expect {
-          patch(article_path(article_one), params: { article: new_valid_attributes })
-        }.to_not(
-          change(Article, :count)
-        )
+      it 'does *not* change count of Articles' do
+        expect { article_one.reload }.not_to change(Article, :count)
       end
     end #context
 
     context "expected errors with invalid new attributes for update" do
-      it "refuses to process the entity if updated @article is equivalent to an existing one" do
-        patch(article_path(article_two), params: { article: { title: article_one.title, body: article_one.body } })
+      it 'refuses to accept changes if updated @article becomes equivalent to an existing one' do
+        patch(
+          article_path(article_two),
+          params: { article: { title: article_one.title, body: article_one.body } }
+        )
         expect(response).to(have_http_status(:unprocessable_entity))
       end
 
-      it 'refuses to process @article if attributes are invalid' do
-        patch(article_path(article_two), params: { article: invalid_attributes })
+      it 'refuses to accept changes on @article if new attributes are invalid' do
+        patch(
+          article_path(article_two),
+          params: { article: invalid_attributes }
+        )
         expect(response).to(have_http_status(:unprocessable_entity))
       end
     end #context
 
-    pending "successfully process the entity when only one attribute clashes"
-    pending "assert no change to Article.count for previous spec."
+    context "successful update upon only partial duplication of @article data attributes" do
+      let(:article_one_before_changes) { article_one }
+
+      before(:each) do
+        patch(
+          article_path(article_one),
+          params: { article: { title: article_one.title, body: article_two.body } }
+        )
+      end
+
+      it 'successfully re-directs to updated @article' do
+        expect(response).to redirect_to(article_path(article_one))
+      end
+
+      it 'bears the updated attributes' do
+        expect(article_one.reload.title).to eql(article_one_before_changes.title)
+        expect(article_one.reload.body).to  eql(article_two.body)
+      end
+
+      it 'does *not* change Article count' do
+        expect { article_one.reload }.not_to change(Article, :count)
+      end
+    end
 
     pending "existing @article can be updated to be as it was"
     pending "assert no change to Article.count for previous spec."
