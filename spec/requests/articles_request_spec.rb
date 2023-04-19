@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe(Article, type: (:request)) do #start of spec file
   # let(:article_one) { Article.create(title: 'A', body: 'abcd') }
-  let(:article_two) { Article.create(title: 'B', body: 'zxcv') }
+  # let(:article_two) { Article.create(title: 'B', body: 'zxcv') }
 
   describe "GET #index" do
     before(:each) do
@@ -99,8 +99,8 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
   end #describe "POST #create"
 
   describe 'PATCH #update' do
-    let(:new_valid_attributes)   { { title: 'Updated title', body: 'Updated body' } }
-    let(:invalid_attributes) { { title: nil,             body: nil } }
+    let(:new_valid_attributes) { attributes_for(:article, :new_valid_attributes) }
+    let(:invalid_attributes)   { attributes_for(:article, :invalid_attributes) }
     let(:article_one) { FactoryBot.create(:article, :valid_attributes) }
 
     context "success with valid new attributes for update" do
@@ -108,7 +108,7 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
         # patch(article_url(article_one), params: { article: valid_attributes })
         patch(
           article_url(article_one),
-          params: { article: attributes_for(:article, :new_valid_attributes) }
+          params: { article: new_valid_attributes }
         )
       end
 
@@ -117,13 +117,13 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
       end
 
       it 'bears the updated attributes' do
-        expect(article_one.reload.title).to eql(valid_attributes[:title])
-        expect(article_one.reload.body).to  eql(valid_attributes[:body])
+        expect(article_one.reload.title).to eql(new_valid_attributes[:title])
+        expect(article_one.reload.body).to  eql(new_valid_attributes[:body])
       end
 
       it 'does *not* change Article count' do
         expect {
-          patch(article_path(article_one), params: { article: valid_attributes })
+          patch(article_path(article_one), params: { article: new_valid_attributes })
         }.to_not(
           change(Article, :count)
         )
