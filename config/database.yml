@@ -18,8 +18,6 @@ default: &default
   adapter:  postgresql
   encoding: unicode
   host:     localhost
-  # username: postgres
-  # password: a
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
@@ -32,11 +30,8 @@ development:
   # To create additional roles in postgres see `$ createuser --help`.
   # When left blank, postgres will use the default role. This is
   # the same name as the operating system user running Rails.
-  # username: development_mastery
-  # username: postgres
 
   # The password associated with the postgres role (username).
-  # password: a
 
   # Connect on a TCP socket. Omitted by default since the client uses a
   # domain socket that doesn't need configuration. Windows does not have
@@ -62,9 +57,6 @@ development:
 test:
   <<: *default
   database: development_mastery_test
-  # username: development_mastery
-  # username: postgres
-  # password: a
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -89,6 +81,3 @@ test:
 production:
   <<: *default
   database: development_mastery_production
-  # username: development_mastery
-  # username: postgres
-  # password: <%= ENV["DEVELOPMENT_MASTERY_DATABASE_PASSWORD"] %>
