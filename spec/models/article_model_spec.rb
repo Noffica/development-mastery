@@ -26,7 +26,7 @@ RSpec.describe Article, type: :model do
       duplicate_attempt.valid?
 
       expect(
-        duplicate_attempt.errors.full_messages.first
+        duplicate_attempt.errors.messages[:body] #search for error by relevant entity
       ).to(
         include("has already been taken")
       )

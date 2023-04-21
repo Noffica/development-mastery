@@ -77,19 +77,19 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
       end
     end #context
 
-    context 'invalid attributes' do
-      let(:post_with_invalid_attributes) {
+    context 'no data attributes' do
+      let(:post_with_no_attributes) {
         post(articles_url, params: { article: attributes_for(:article, :no_attributes) })
       }
 
-      it 'yields "422 Unprocessable entity" when params are invalid' do
-        post_with_invalid_attributes
-        expect(response).to(have_http_status(:unprocessable_entity))
+      it 'yields "422 Unprocessable entity" when data attributes are missing' do
+        post_with_no_attributes
+        expect(response).to have_http_status(:unprocessable_entity)
       end
 
       it 'does *not* result in change of count of Articles' do
         expect {
-          post_with_invalid_attributes
+          post_with_no_attributes
         }.to_not(
           change(Article, :count)
         )
@@ -105,7 +105,6 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
 
     context "success with valid new attributes for update" do
       before(:each) do
-        # patch(article_url(article_one), params: { article: valid_attributes })
         patch(
           article_url(article_one),
           params: { article: new_valid_attributes }
