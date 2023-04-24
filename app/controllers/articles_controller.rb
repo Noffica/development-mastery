@@ -1,5 +1,5 @@
 class ArticlesController < ApplicationController
-  
+
   before_action :set_article, only: [:show, :edit, :update, :destroy]
 
   def hello
@@ -10,7 +10,7 @@ class ArticlesController < ApplicationController
   def index
     @articles_all = Article.all
   end
-  
+
   # load a single, particular Article
   def show
     # before_action: :set_article
@@ -25,7 +25,7 @@ class ArticlesController < ApplicationController
   # create a single, new instance of Article
   def create
     @article = Article.new(article_params)
-    
+
     if @article.save
       redirect_to(@article)
     else
@@ -51,7 +51,7 @@ class ArticlesController < ApplicationController
   # delete a single, particular instance of Article
   def destroy
     # before_action: :set_article
-    
+
     if @article.destroy
       flash[:notice] = "Article \"#{@article.title}\" has been deleted."
       redirect_to(articles_path)

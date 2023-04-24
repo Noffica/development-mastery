@@ -22,13 +22,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_01_055132) do
     t.index ["title", "body"], name: "index_for_unique_combination_of_title_body", unique: true
   end
 
-  create_table "komments", force: :cascade do |t|
-    t.string "author"
-    t.text "body"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "widgets", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false

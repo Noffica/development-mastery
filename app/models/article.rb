@@ -5,7 +5,7 @@ class Article < ApplicationRecord
     presence: true,
   )
   validates(
-    :body, 
+    :body,
     presence:   true,
     length:     { minimum: 1 },
     uniqueness: { scope: :title }

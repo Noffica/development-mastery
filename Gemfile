@@ -6,7 +6,7 @@ ruby "3.1.1"
 gem "cowsay"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 7.0.2", ">= 7.0.2.3"
+gem "rails", "~> 7.0.2"
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
@@ -58,6 +58,7 @@ group :development, :test do
   gem "simplecov", require: false
   gem "pry-byebug"
   gem "rails-controller-testing"
+  gem "factory_bot_rails"
 end
 
 group :development do

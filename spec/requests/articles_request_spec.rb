@@ -1,9 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe(Article, type: (:request)) do #start of spec file
-  let(:article_one) { Article.create(title: 'A', body: 'abcd') }
-  let(:article_two) { Article.create(title: 'B', body: 'zxcv') }
-
   describe "GET #index" do
     before(:each) do
       get(articles_path)
@@ -20,14 +17,16 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
 
   describe "GET #show" do
     context "valid @article path" do
+      let(:article_one) { FactoryBot.create(:article, :valid_attributes) }
+
       before(:each) do
-        get(article_path(article_one))
+        get article_path(article_one)
       end
-      
+
       it 'has a successful response' do
         expect(response).to(have_http_status(:ok))
       end
-      
+
       it 'renders its template' do
         expect(response).to(render_template(:show))
       end
@@ -43,11 +42,11 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
     before(:each) do
       get(new_article_path)
     end
-  
+
     it 'has a successful response' do
       expect(response).to(have_http_status(:ok))
     end
-    
+
     it 'renders its template' do
       expect(response).to(render_template(:new))
     end
@@ -55,7 +54,9 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
 
   describe 'POST #create' do
     context 'valid attributes' do
-      let(:post_with_valid_attributes) { post(articles_path, params: { article: { title: 'one', body: 'abcd' } }) }
+      let(:post_with_valid_attributes) {
+        post(articles_url, params: { article: attributes_for(:article, :valid_attributes) })
+      }
 
       it 'yields a "302 Found" response' do
         post_with_valid_attributes
@@ -76,17 +77,19 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
       end
     end #context
 
-    context 'invalid attributes' do
-      let(:post_with_invalid_attributes) { post(articles_path, params: { article: { title: nil, body: nil } }) }
+    context 'no data attributes' do
+      let(:post_with_no_attributes) {
+        post(articles_url, params: { article: attributes_for(:article, :no_attributes) })
+      }
 
-      it 'yields "422 Unprocessable entity" when params are invalid' do
-        post_with_invalid_attributes
-        expect(response).to(have_http_status(:unprocessable_entity))
+      it 'yields "422 Unprocessable entity" when data attributes are missing' do
+        post_with_no_attributes
+        expect(response).to have_http_status(:unprocessable_entity)
       end
-      
+
       it 'does *not* result in change of count of Articles' do
         expect {
-          post_with_invalid_attributes
+          post_with_no_attributes
         }.to_not(
           change(Article, :count)
         )
@@ -95,12 +98,17 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
   end #describe "POST #create"
 
   describe 'PATCH #update' do
-    let(:valid_attributes)   { { title: 'Updated title', body: 'Updated body' } }
-    let(:invalid_attributes) { { title: nil,             body: nil } }
+    let(:article_one) { FactoryBot.create(:article, :valid_attributes) }
+    let(:article_two) { FactoryBot.create(:article, :new_valid_attributes) }
+    let(:new_valid_attributes) { attributes_for(:article, :new_valid_attributes) }
+    let(:invalid_attributes)   { attributes_for(:article, :no_attributes) }
 
     context "success with valid new attributes for update" do
       before(:each) do
-        patch(article_path(article_one), params: { article: valid_attributes })
+        patch(
+          article_url(article_one),
+          params: { article: new_valid_attributes }
+        )
       end
 
       it 're-directs to the updated @article' do
@@ -108,59 +116,103 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
       end
 
       it 'bears the updated attributes' do
-        expect(article_one.reload.title).to eql(valid_attributes[:title])
-        expect(article_one.reload.body).to  eql(valid_attributes[:body])
+        article_one.reload
+        expect(article_one).to have_attributes(new_valid_attributes)
       end
 
-      it 'does *not* change Article count' do
-        expect { 
-          patch(article_path(article_one), params: { article: valid_attributes }) 
-        }.to_not(
-          change(Article, :count)
-        )
+      it 'does *not* change count of Articles' do
+        expect { article_one.reload }.not_to change(Article, :count)
       end
     end #context
 
     context "expected errors with invalid new attributes for update" do
-      it "refuses to process the entity if updated @article is equivalent to an existing one" do
-        patch(article_path(article_two), params: { article: { title: article_one.title, body: article_one.body } })
+      it 'refuses to accept changes if updated @article becomes equivalent to an existing one' do
+        patch(
+          article_path(article_two),
+          params: { article: { title: article_one.title, body: article_one.body } }
+        )
         expect(response).to(have_http_status(:unprocessable_entity))
       end
 
-      it 'refuses to process @article if attributes are invalid' do
-        patch(article_path(article_two), params: { article: invalid_attributes })
+      it 'refuses to accept changes on @article if new attributes are invalid' do
+        patch(
+          article_path(article_two),
+          params: { article: invalid_attributes }
+        )
         expect(response).to(have_http_status(:unprocessable_entity))
       end
     end #context
 
-    pending "successfully process the entity when only one attribute clashes"
-    pending "assert no change to Article.count for previous spec."
+    context "successful update upon only partial duplication of @article data attributes" do
+      let(:article_one_before_changes) { article_one }
 
-    pending "existing @article can be updated to be as it was"
-    pending "assert no change to Article.count for previous spec."
+      before(:each) do
+        patch(
+          article_path(article_one),
+          params: { article: { title: article_one.title, body: article_two.body } }
+        )
+      end
+
+      it 'successfully re-directs to updated @article' do
+        expect(response).to redirect_to(article_path(article_one))
+      end
+
+      it 'bears the updated attributes' do
+        expect(article_one.reload.title).to eql(article_one_before_changes.title)
+        expect(article_one.reload.body).to  eql(article_two.body)
+      end
+
+      it 'does *not* change Article count' do
+        expect { article_one.reload }.not_to change(Article, :count)
+      end
+    end
+
+    context "existing @article can be updated with same, existing data attributes" do
+      let(:article_one_before_changes) { article_one }
+
+      before(:each) do
+        patch(
+          article_path(article_one),
+          params: { article: { title: article_one.title, body: article_one.body } }
+        )
+      end
+
+      it 'successfully re-directs to updated @article' do
+        expect(response).to redirect_to(article_path(article_one))
+      end
+
+      it 'bears the same attributes' do
+        expect(article_one.reload.title).to eql(article_one_before_changes.title)
+        expect(article_one.reload.body).to  eql(article_one_before_changes.body)
+      end
+
+      it 'does *not* change Article count' do
+        expect { article_one.reload }.not_to change(Article, :count)
+      end
+    end #context
   end #describe "PATCH update"
 
   describe "#DELETE" do
-    let(:deletion) { delete(article_path(article_one)) }
+    let(:article_one) { FactoryBot.create(:article, :valid_attributes) }
 
     it "deletes the @article" do
-      deletion
-      expect(response).to(redirect_to(articles_path))
+      delete(article_path(article_one))
+      expect(response).to redirect_to(articles_path)
     end
 
     it "reduces number of @article objects by 1" do
       article_one #instantiation
-      expect { 
-        deletion
+      expect {
+        delete(article_path(article_one))
       }.to(
         change(Article, :count).by(-1)
       )
     end
-    
+
     it 'displays notice of successful deletion' do
-      article_title = article_one.title
-      deletion
-      expect(flash[:notice]).to(eq("Article \"#{article_title}\" has been deleted."))
+      deleted_article_title = article_one.title
+      delete(article_path(article_one))
+      expect(flash[:notice]).to(eq("Article \"#{deleted_article_title}\" has been deleted."))
     end
   end #describe #DELETE
 end #of file
