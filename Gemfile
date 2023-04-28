@@ -50,7 +50,7 @@ gem "bootsnap", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
-# Generation and management of slugs
+# Generation and management of slugs (accessible IDs instead of alpha-numeric sequences)
 gem 'friendly_id', '~> 5.5'
 
 group :development, :test do

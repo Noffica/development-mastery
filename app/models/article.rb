@@ -1,13 +1,20 @@
 # model
 class Article < ApplicationRecord
-  validates(
-    :title,
-    presence: true,
-  )
-  validates(
-    :body,
-    presence:   true,
-    length:     { minimum: 1 },
-    uniqueness: { scope: :title }
-  )
-end
+  # extend FriendlyId
+
+  validates :title, presence: true
+  validates :body,  presence: true, uniqueness: { scope: :title }
+  # friendly_id :slug_candidates, use: %i[slugged]
+
+  #def should_generate_new_friendly_id?
+  #   title_changed? || slug.blank?
+  #end
+  #
+  # private
+  #def slug_candidates
+  #   [
+  #     :title,
+  #     [:title, :id]
+  #   ]
+  #end
+end #of file
