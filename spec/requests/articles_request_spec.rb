@@ -55,7 +55,7 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
   describe 'POST #create' do
     context 'valid attributes' do
       let(:post_with_valid_attributes) {
-        post(articles_url, params: { article: attributes_for(:article, :valid_attributes) })
+        post(articles_url, params: { article: FactoryBot.attributes_for(:article, :valid_attributes) })
       }
 
       it 'yields a "302 Found" response' do
@@ -79,7 +79,7 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
 
     context 'no data attributes' do
       let(:post_with_no_attributes) {
-        post(articles_url, params: { article: attributes_for(:article, :no_attributes) })
+        post(articles_url, params: { article: FactoryBot.attributes_for(:article, :no_attributes) })
       }
 
       it 'yields "422 Unprocessable entity" when data attributes are missing' do
@@ -100,8 +100,8 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
   describe 'PATCH #update' do
     let(:article_one) { FactoryBot.create(:article, :valid_attributes) }
     let(:article_two) { FactoryBot.create(:article, :new_valid_attributes) }
-    let(:new_valid_attributes) { attributes_for(:article, :new_valid_attributes) }
-    let(:invalid_attributes)   { attributes_for(:article, :no_attributes) }
+    let(:new_valid_attributes) { FactoryBot.attributes_for(:article, :new_valid_attributes) }
+    let(:invalid_attributes)   { FactoryBot.attributes_for(:article, :no_attributes) }
 
     context "success with valid new attributes for update" do
       before(:each) do
@@ -112,6 +112,7 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
       end
 
       it 're-directs to the updated @article' do
+        article_one.reload
         expect(response).to redirect_to(article_path(article_one))
       end
 
