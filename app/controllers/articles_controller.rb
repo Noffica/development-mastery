@@ -61,16 +61,15 @@ class ArticlesController < ApplicationController
     end
   end
 
-
+  ##########################################################
   private
+  ##########################################################
   def article_params
     params.require(:article).permit(:title, :body)
   end
 
-  private
   def set_article
-    # @article ||= Article.friendly.find(params[:id])
-    @article ||= Article.find(params[:id])
+    @article ||= Article.friendly.find(params[:id])
   end
 
 end #class ArticlesController
