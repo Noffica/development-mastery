@@ -211,9 +211,22 @@ RSpec.describe(Article, type: (:request)) do #start of spec file
     end
 
     it 'displays notice of successful deletion' do
-      deleted_article_title = article_one.title
-      delete(article_path(article_one))
-      expect(flash[:notice]).to(eq("Article \"#{deleted_article_title}\" has been deleted."))
+      delete article_path(article_one)
+      expect(flash[:notice]).to eq("Article \"#{article_one.title}\" has been deleted.")
     end
   end #describe #DELETE
+
+  describe "use of slugs" do
+    let(:article_one) { FactoryBot.create(:article, :valid_attributes) }
+    let(:article_one_path_with_slug) { articles_path + "/" + article_one.slug }
+
+    it 'can access Article by slug' do
+      expect(article_path(article_one)).to eq(article_one_path_with_slug)
+    end
+
+    it 'returns successful response when accessed by slug' do
+      get article_one_path_with_slug
+      expect(response).to have_http_status(:ok)
+    end
+  end #describe "use of slugs"
 end #of file

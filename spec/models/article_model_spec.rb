@@ -91,4 +91,22 @@ RSpec.describe Article, type: :model do
       end
     end #context
   end #context
-end #file
+
+  context "when using \'slugs\'" do
+    let(:sample_article) { create(:article, :valid_attributes) }
+
+    it "should find the Article object by its slug" do
+      expect(Article.friendly.find(sample_article.slug)).to eq(sample_article)
+    end
+  end #of context
+
+  context "when slugs clash" do
+    pending 'slug-title of new article clashes with slug-title of existing article'
+    pending 'slug-title of updated article clashes with slug-title of existing article'
+  end
+
+  context "accented characters with default config. of the slug provider gem of Friendly ID" do
+    pending 'replaces accented Latin characters with substituted characters'
+    pending 'replaces non-Latin (e.g. Arabic, Cyrillic) characters with substituted characters'
+  end
+end #of file

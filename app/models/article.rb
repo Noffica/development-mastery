@@ -4,8 +4,8 @@ class Article < ApplicationRecord
 
   validates :title, presence: true
   validates :body,  presence: true, uniqueness: { scope: :title }
-
   friendly_id :slug_candidates, use: [:slugged, :history]
+  validates :slug,  presence: true
 
   def should_generate_new_friendly_id?
     title_changed? || slug.blank?
